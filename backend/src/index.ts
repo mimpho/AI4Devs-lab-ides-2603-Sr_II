@@ -15,6 +15,15 @@ app.get('/', (req, res) => {
   res.send('Hola LTI!');
 });
 
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static('uploads'));
+
+// Routes
+import { candidateRoutes } from './presentation/candidateRoutes';
+app.use('/api/candidates', candidateRoutes);
+
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
   res.type('text/plain'); 
