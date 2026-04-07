@@ -23,7 +23,7 @@ export class CandidateService {
 
   async createCandidate(data: CreateCandidateDTO, cvFile?: IFile): Promise<Candidate> {
     // Fail fast if main data is empty representing a bad request schema
-    if (!data.email || !data.firstName || !data.lastName) {
+    if (!data || !data.email || !data.firstName || !data.lastName) {
       throw new CandidateValidationError('Required fields are missing: firstName, lastName, or email.');
     }
 

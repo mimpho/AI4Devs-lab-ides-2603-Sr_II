@@ -27,9 +27,9 @@ export class CandidateController {
         data: newCandidate,
       });
     } catch (error: any) {
-      if (error instanceof CandidateValidationError) {
+      if (error.name === 'CandidateValidationError') {
         res.status(400).json({ error: 'Validation_Error', message: error.message });
-      } else if (error instanceof DuplicateEmailError || error.message.includes('already exists')) {
+      } else if (error.name === 'DuplicateEmailError' || error.message.includes('already exists')) {
         res.status(409).json({ error: 'Conflict', message: error.message });
       } else {
         console.error('Unexpected error creating candidate:', error);
