@@ -1,24 +1,21 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import CandidateForm from './components/CandidateForm';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App bg-light min-vh-100">
+      <nav className="navbar navbar-dark bg-dark mb-4">
+        <div className="container">
+          <span className="navbar-brand mb-0 h1">ATS System - Recruiter Dashboard</span>
+        </div>
+      </nav>
+      <main>
+        <CandidateForm />
+      </main>
+      <footer className="py-4 text-center text-muted">
+        &copy; {new Date().getFullYear()} ATS Candidate Manager
+      </footer>
     </div>
   );
 }
