@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 
@@ -7,11 +7,12 @@ dotenv.config();
 const prisma = new PrismaClient();
 
 export const app = express();
+app.use(cors()); // Enable CORS for development
 export default prisma;
 
 const port = 3010;
 
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Hola LTI!');
 });
 
