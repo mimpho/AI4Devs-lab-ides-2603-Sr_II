@@ -30,3 +30,4 @@ yarn-error.log*
 .nvmrc
 
 backend/uploads/
+backend/prisma/seed.js
