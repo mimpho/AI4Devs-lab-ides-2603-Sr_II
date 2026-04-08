@@ -3,9 +3,21 @@ import { CandidateService, IFile } from '../application/CandidateService';
 import { CandidateValidationError } from '../domain/Candidate';
 import { DuplicateEmailError } from '../infrastructure/CandidateRepository';
 
+/**
+ * Express controller for handling HTTP requests related to Candidates.
+ */
 export class CandidateController {
+  /**
+   * Initializes the controller with a CandidateService.
+   * @param candidateService The application service for candidate logic.
+   */
   constructor(private readonly candidateService: CandidateService) {}
 
+  /**
+   * Registers a new candidate. Handles file upload metadata and returns the created record.
+   * @param req Express request object containing body and file.
+   * @param res Express response object.
+   */
   public addCandidate = async (req: Request, res: Response): Promise<void> => {
     try {
       const data = req.body;
@@ -38,6 +50,11 @@ export class CandidateController {
     }
   };
 
+  /**
+   * Retrieves unique education and experience strings for autocompletion.
+   * @param _req Express request object.
+   * @param res Express response object.
+   */
   public getSuggestions = async (_req: Request, res: Response): Promise<void> => {
     try {
       const suggestions = await this.candidateService.getCandidateSuggestions();

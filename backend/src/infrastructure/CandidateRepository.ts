@@ -9,13 +9,26 @@ export class DuplicateEmailError extends Error {
   }
 }
 
+/**
+ * Implementation of ICandidateRepository using Prisma as the data provider.
+ */
 export class CandidateRepository implements ICandidateRepository {
   private prisma: PrismaClient;
 
+  /**
+   * Initializes the repository with a PrismaClient.
+   * @param prismaClient Optional PrismaClient instance for dependency injection.
+   */
   constructor(prismaClient?: PrismaClient) {
     this.prisma = prismaClient || new PrismaClient();
   }
 
+  /**
+   * Persists a candidate in the database.
+   * @param candidate The candidate domain entity to save.
+   * @returns The saved candidate entity with its generated ID.
+   * @throws {DuplicateEmailError} if the candidate's email already exists in the system.
+   */
   async save(candidate: Candidate): Promise<Candidate> {
     try {
       const data = {
@@ -59,6 +72,11 @@ export class CandidateRepository implements ICandidateRepository {
     }
   }
 
+  /**
+   * Finds a candidate by their unique email address.
+   * @param email The email address to search for.
+   * @returns The candidate if found, or null otherwise.
+   */
   async findByEmail(email: string): Promise<Candidate | null> {
     const record = await this.prisma.candidate.findUnique({
       where: { email },
@@ -78,6 +96,10 @@ export class CandidateRepository implements ICandidateRepository {
     });
   }
 
+  /**
+   * Retrieves unique strings for education and experience across all candidates.
+   * @returns A Promise resolving to an object with arrays of unique strings.
+   */
   async getSuggestions(): Promise<{ education: string[]; experience: string[] }> {
     const candidates = await this.prisma.candidate.findMany({
       select: {

@@ -18,9 +18,23 @@ export interface IFile {
   size: number;
 }
 
+/**
+ * Service class responsible for handling candidate-related business logic.
+ */
 export class CandidateService {
+  /**
+   * Initializes the CandidateService with a repository.
+   * @param candidateRepository The repository used to persist candidate data.
+   */
   constructor(private readonly candidateRepository: ICandidateRepository) {}
 
+  /**
+   * Creates a new candidate in the system.
+   * @param data The candidate's personal and professional information.
+   * @param cvFile Optional CV file metadata if a file was uploaded.
+   * @returns The created Candidate domain entity.
+   * @throws {CandidateValidationError} If required fields are missing or invalid.
+   */
   async createCandidate(data: CreateCandidateDTO, cvFile?: IFile): Promise<Candidate> {
     // Fail fast if main data is empty representing a bad request schema
     if (!data || !data.email || !data.firstName || !data.lastName) {
@@ -58,6 +72,10 @@ export class CandidateService {
     return await this.candidateRepository.save(candidateDomainEntity);
   }
 
+  /**
+   * Retrieves unique education and experience values from all candidates to provide autocompletion suggestions.
+   * @returns An object containing lists of unique education and experience strings.
+   */
   async getCandidateSuggestions(): Promise<{ education: string[]; experience: string[] }> {
     return await this.candidateRepository.getSuggestions();
   }

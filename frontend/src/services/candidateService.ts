@@ -11,6 +11,12 @@ export interface CandidateData {
   cvFile?: File;
 }
 
+/**
+ * Sends a candidate's data and CV file to the backend API.
+ * @param candidateData An object containing all candidate fields and the optional File object.
+ * @returns A Promise resolving to the created candidate data from the server.
+ * @throws An error if the server response is not OK or if communication fails.
+ */
 export const addCandidate = async (candidateData: CandidateData): Promise<any> => {
   const formData = new FormData();
 
@@ -47,6 +53,11 @@ export const addCandidate = async (candidateData: CandidateData): Promise<any> =
   }
 };
 
+/**
+ * Fetches lists of unique education and experience strings from the server.
+ * Used for autocompletion suggestions in the UI.
+ * @returns A Promise resolving to an object with education and experience arrays.
+ */
 export const getSuggestions = async (): Promise<{ education: string[]; experience: string[] }> => {
   try {
     const response = await fetch(`${API_BASE_URL}/candidates/suggestions`);
