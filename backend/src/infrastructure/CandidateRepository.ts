@@ -77,4 +77,21 @@ export class CandidateRepository implements ICandidateRepository {
       cvUrl: record.cvUrl,
     });
   }
+
+  async getSuggestions(): Promise<{ education: string[]; experience: string[] }> {
+    const candidates = await this.prisma.candidate.findMany({
+      select: {
+        education: true,
+        experience: true,
+      },
+    });
+
+    const education = Array.from(new Set(candidates.map((c: any) => c.education).filter(Boolean)));
+    const experience = Array.from(new Set(candidates.map((c: any) => c.experience).filter(Boolean)));
+
+    return {
+      education: education as string[],
+      experience: experience as string[],
+    };
+  }
 }

@@ -10,7 +10,8 @@ describe('CandidateService', () => {
     candidateRepositoryMock = {
       save: jest.fn(),
       findByEmail: jest.fn(),
-    };
+      getSuggestions: jest.fn(),
+    } as any;
     candidateService = new CandidateService(candidateRepositoryMock);
   });
 

@@ -48,6 +48,10 @@ const candidateRoutes = Router();
 
 // Handle multer error explicitly in a wrapper or middleware if desired, 
 // here we let the controller handle business logic. Express error handlers can pick up Multer errors.
+// Route to get autocompletion suggestions
+candidateRoutes.get('/suggestions', controller.getSuggestions);
+
+// Handle candidate registration with file upload
 candidateRoutes.post('/', upload.single('cvFile'), controller.addCandidate);
 
 export { candidateRoutes };

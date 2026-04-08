@@ -57,4 +57,8 @@ export class CandidateService {
     // 2. Persist Entity via Repository Interface
     return await this.candidateRepository.save(candidateDomainEntity);
   }
+
+  async getCandidateSuggestions(): Promise<{ education: string[]; experience: string[] }> {
+    return await this.candidateRepository.getSuggestions();
+  }
 }

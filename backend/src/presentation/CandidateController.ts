@@ -37,4 +37,14 @@ export class CandidateController {
       }
     }
   };
+
+  public getSuggestions = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const suggestions = await this.candidateService.getCandidateSuggestions();
+      res.status(200).json(suggestions);
+    } catch (error: any) {
+      console.error('Error fetching suggestions:', error);
+      res.status(500).json({ error: 'Internal_Server_Error', message: 'Unable to fetch suggestions' });
+    }
+  };
 }
