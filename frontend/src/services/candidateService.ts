@@ -42,8 +42,12 @@ export const addCandidate = async (candidateData: CandidateData): Promise<any> =
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Error creating candidate');
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error creating candidate');
+      }
+      throw new Error(`Server returned error: ${response.status} ${response.statusText}`);
     }
 
     return await response.json();
@@ -62,9 +66,14 @@ export const getSuggestions = async (): Promise<{ education: string[]; experienc
   try {
     const response = await fetch(`${API_BASE_URL}/candidates/suggestions`);
     if (!response.ok) {
-      throw new Error('Failed to fetch suggestions');
+      throw new Error(`Failed to fetch suggestions: ${response.status} ${response.statusText}`);
     }
-    return await response.json();
+    
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return await response.json();
+    }
+    throw new Error('Server returned non-JSON response for suggestions');
   } catch (error: any) {
     console.error('API Error in getSuggestions:', error.message);
     return { education: [], experience: [] }; // Fallback to empty if fails
