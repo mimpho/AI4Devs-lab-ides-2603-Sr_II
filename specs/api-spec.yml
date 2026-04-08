@@ -20,9 +20,9 @@ info:
     name: ISC
     
 servers:
-  - url: http://localhost:3000
+  - url: http://localhost:3010/api
     description: Development server
-  - url: https://api.lti.dev
+  - url: https://api.lti.dev/api
     description: Production server
 
 paths:
@@ -89,28 +89,89 @@ paths:
     
     post:
       summary: Create a new candidate
-      description: Add a new candidate to the system with their personal information, education, and work experience
+      description: Add a new candidate with their personal information, education, development experience and CV file.
       tags:
         - Candidates
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/CreateCandidateRequest'
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                phone:
+                  type: string
+                address:
+                  type: string
+                education:
+                  type: string
+                  description: Education details as a single string
+                experience:
+                  type: string
+                  description: Work experience details as a single string
+                cvFile:
+                  type: string
+                  format: binary
+                  description: Candidate's CV (PDF or DOCX)
+              required:
+                - firstName
+                - lastName
+                - email
       responses:
         '201':
           description: Candidate created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateCandidateResponse'
+                $ref: '#/components/schemas/SuccessResponse'
         '400':
-          description: Validation error or email already exists
+          description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /candidates/suggestions:
+    get:
+      summary: Get candidate attribute suggestions
+      description: Retrieve unique values for education and experience from existing candidates for autocompletion.
+      tags:
+        - Candidates
+      responses:
+        '200':
+          description: Successfully retrieved suggestions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  education:
+                    type: array
+                    items:
+                      type: string
+                  experience:
+                    type: array
+                    items:
+                      type: string
         '500':
           description: Internal server error
           content:
@@ -461,38 +522,29 @@ components:
           description: Unique candidate identifier
         firstName:
           type: string
-          description: Candidate's first name
         lastName:
           type: string
-          description: Candidate's last name
         email:
           type: string
           format: email
-          description: Candidate's email address
         phone:
           type: string
           nullable: true
-          description: Candidate's phone number
         address:
           type: string
           nullable: true
-          description: Candidate's address
-        educations:
-          type: array
-          items:
-            $ref: '#/components/schemas/Education'
-        workExperiences:
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkExperience'
-        resumes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Resume'
-        applications:
-          type: array
-          items:
-            $ref: '#/components/schemas/Application'
+        education:
+          type: string
+          nullable: true
+          description: Candidate education summary
+        experience:
+          type: string
+          nullable: true
+          description: Candidate experience summary
+        cvUrl:
+          type: string
+          nullable: true
+          description: URL to the candidate's CV file
       required:
         - firstName
         - lastName
@@ -522,65 +574,16 @@ components:
                         items:
                           $ref: '#/components/schemas/Interview'
 
-    CreateCandidateRequest:
+    SuccessResponse:
       type: object
       properties:
-        firstName:
+        message:
           type: string
-          description: Candidate's first name
-        lastName:
-          type: string
-          description: Candidate's last name
-        email:
-          type: string
-          format: email
-          description: Candidate's email address
-        phone:
-          type: string
-          nullable: true
-          description: Candidate's phone number
-        address:
-          type: string
-          nullable: true
-          description: Candidate's address
-        educations:
-          type: array
-          items:
-            $ref: '#/components/schemas/CreateEducationRequest'
-        workExperiences:
-          type: array
-          items:
-            $ref: '#/components/schemas/CreateWorkExperienceRequest'
-        cv:
-          $ref: '#/components/schemas/CreateResumeRequest'
+        data:
+          $ref: '#/components/schemas/Candidate'
       required:
-        - firstName
-        - lastName
-        - email
-
-    CreateCandidateResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Created candidate ID
-        firstName:
-          type: string
-        lastName:
-          type: string
-        email:
-          type: string
-        phone:
-          type: string
-          nullable: true
-        address:
-          type: string
-          nullable: true
-      required:
-        - id
-        - firstName
-        - lastName
-        - email
+        - message
+        - data
 
     UpdateCandidateStageRequest:
       type: object
