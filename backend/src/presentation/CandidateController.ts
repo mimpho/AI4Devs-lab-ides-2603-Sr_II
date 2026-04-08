@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { CandidateService, IFile } from '../application/CandidateService';
 import { CandidateValidationError } from '../domain/Candidate';
 import { DuplicateEmailError } from '../infrastructure/CandidateRepository';
+import fs from 'fs';
 
 /**
  * Express controller for handling HTTP requests related to Candidates.
@@ -39,6 +40,13 @@ export class CandidateController {
         data: newCandidate,
       });
     } catch (error: any) {
+      // Clean up uploaded file if creation failed (e.g. duplicate email, validation error)
+      if (req.file && req.file.path) {
+        fs.unlink(req.file.path, (err) => {
+          if (err) console.error(`Failed to delete orphaned file: ${req.file?.path}`, err);
+        });
+      }
+
       if (error.name === 'CandidateValidationError') {
         res.status(400).json({ error: 'Validation_Error', message: error.message });
       } else if (error.name === 'DuplicateEmailError' || error.message.includes('already exists')) {
