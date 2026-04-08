@@ -46,3 +46,16 @@ export const addCandidate = async (candidateData: CandidateData): Promise<any> =
     throw error;
   }
 };
+
+export const getSuggestions = async (): Promise<{ education: string[]; experience: string[] }> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/candidates/suggestions`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch suggestions');
+    }
+    return await response.json();
+  } catch (error: any) {
+    console.error('API Error in getSuggestions:', error.message);
+    return { education: [], experience: [] }; // Fallback to empty if fails
+  }
+};

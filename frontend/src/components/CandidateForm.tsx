@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { addCandidate, CandidateData } from '../services/candidateService';
+import React, { useState, useEffect } from 'react';
+import { addCandidate, CandidateData, getSuggestions } from '../services/candidateService';
 
 const CandidateForm: React.FC = () => {
   const [formData, setFormData] = useState<Partial<CandidateData>>({
@@ -14,6 +14,18 @@ const CandidateForm: React.FC = () => {
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [suggestions, setSuggestions] = useState<{ education: string[]; experience: string[] }>({
+    education: [],
+    experience: [],
+  });
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      const data = await getSuggestions();
+      setSuggestions(data);
+    };
+    fetchSuggestions();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -210,30 +222,44 @@ const CandidateForm: React.FC = () => {
               <label htmlFor="education" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Education
               </label>
-              <textarea
-                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-gray-100 resize-none"
+              <input
+                type="text"
+                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-gray-100"
                 id="education"
                 name="education"
-                rows={2}
+                list="education-suggestions"
                 placeholder="University, Degree Name..."
                 value={formData.education}
                 onChange={handleInputChange}
+                autoComplete="off"
               />
+              <datalist id="education-suggestions">
+                {suggestions.education.map((item, idx) => (
+                  <option key={idx} value={item} />
+                ))}
+              </datalist>
             </div>
 
             <div className="space-y-2">
               <label htmlFor="experience" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
                 Work Experience
               </label>
-              <textarea
-                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-gray-100 resize-none"
+              <input
+                type="text"
+                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none text-gray-900 dark:text-gray-100"
                 id="experience"
                 name="experience"
-                rows={3}
+                list="experience-suggestions"
                 placeholder="Briefly describe previous roles..."
                 value={formData.experience}
                 onChange={handleInputChange}
+                autoComplete="off"
               />
+              <datalist id="experience-suggestions">
+                {suggestions.experience.map((item, idx) => (
+                  <option key={idx} value={item} />
+                ))}
+              </datalist>
             </div>
 
             <div className="space-y-2">
