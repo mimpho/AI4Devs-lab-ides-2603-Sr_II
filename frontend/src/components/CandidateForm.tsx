@@ -69,6 +69,38 @@ const CandidateForm: React.FC = () => {
     }
   };
 
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      // Basic type validation
+      const allowedTypes = ['.pdf', '.docx', '.doc'];
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      if (fileExt && allowedTypes.includes(`.${fileExt}`)) {
+        setCvFile(file);
+      } else {
+        setMessage({ type: 'error', text: 'Invalid file type. Please upload a PDF or DOCX.' });
+      }
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700 transition-all duration-300">
@@ -208,20 +240,33 @@ const CandidateForm: React.FC = () => {
               <label htmlFor="cvFile" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
                 CV Document (PDF/DOCX)
               </label>
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-700 border-dashed rounded-lg hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer group">
+              <div 
+                className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-lg transition-all duration-200 cursor-pointer group ${
+                  isDragging 
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-[1.02]' 
+                    : 'border-gray-300 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500'
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
                 <div className="space-y-1 text-center">
-                  <svg className="mx-auto h-12 w-12 text-gray-400 group-hover:text-blue-500 transition-colors" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                  <svg className={`mx-auto h-12 w-12 transition-colors ${isDragging ? 'text-blue-500' : 'text-gray-400 group-hover:text-blue-500'}`} stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
                     <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   <div className="flex text-sm text-gray-600 dark:text-gray-400">
-                    <label htmlFor="cvFile" className="relative cursor-pointer bg-transparent rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
-                      <span>Upload a file</span>
+                    <p className="relative cursor-pointer bg-transparent rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                      <span>{cvFile ? 'Change file' : 'Upload a file'}</span>
                       <input id="cvFile" name="cvFile" type="file" className="sr-only" accept=".pdf,.docx,.doc" onChange={handleFileChange} />
-                    </label>
+                    </p>
                     <p className="pl-1">or drag and drop</p>
                   </div>
                   <p className="text-xs text-gray-500 dark:text-gray-500">
-                    {cvFile ? `Selected: ${cvFile.name}` : 'PDF, DOCX up to 5MB'}
+                    {cvFile ? (
+                      <span className="text-blue-600 dark:text-blue-400 font-semibold">{cvFile.name}</span>
+                    ) : (
+                      'PDF, DOCX up to 5MB'
+                    )}
                   </p>
                 </div>
               </div>
