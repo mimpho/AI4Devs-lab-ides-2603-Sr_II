@@ -28,21 +28,21 @@ Create environment files for both backend and frontend:
 # Database Configuration
 DB_HOST=localhost
 DB_PORT=5432
-DB_USER=LTIdbUser
-DB_PASSWORD=D1ymf8wyQEGthFR1E9xhCq
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
 DB_NAME=LTIdb
 
 # Application Configuration
-PORT=3000
+PORT=3010
 NODE_ENV=development
 
 # Prisma Database URL
-DATABASE_URL="postgresql://LTIdbUser:D1ymf8wyQEGthFR1E9xhCq@localhost:5432/LTIdb"
+DATABASE_URL="postgresql://your_db_user:your_db_password@localhost:5432/LTIdb?schema=public"
 ```
 
 **Frontend Environment** (`frontend/.env`):
 ```env
-REACT_APP_API_URL=http://localhost:3000
+REACT_APP_API_URL=http://localhost:3010/api
 ```
 
 ### 3. Database Setup (PostgreSQL with Docker)
@@ -61,8 +61,8 @@ The PostgreSQL database will be available at:
 - **Host**: `localhost`
 - **Port**: `5432`
 - **Database**: `LTIdb`
-- **Username**: `LTIdbUser`
-- **Password**: `D1ymf8wyQEGthFR1E9xhCq`
+- **Username**: `your_db_user`
+- **Password**: `your_db_password`
 
 ### 4. Backend Setup
 
