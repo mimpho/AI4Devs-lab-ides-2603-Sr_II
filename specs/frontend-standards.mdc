@@ -59,10 +59,11 @@ This document outlines the best practices, conventions, and standards used in th
 - **Create React App 5.0.1**: Build tooling and development server
 - **React Router DOM 6.23.1**: Client-side routing and navigation
 
-### UI Framework
-- **Bootstrap 5.3.3**: CSS framework for responsive design
-- **React Bootstrap 2.10.2**: Bootstrap components for React
-- **React Bootstrap Icons 1.11.4**: Icon library
+### UI & Styling Framework
+- **Tailwind CSS 3.4.13**: Utility-first CSS framework for rapid UI development
+- **PostCSS 8.4.47**: For processing Tailwind and Autoprefixer
+- **Autoprefixer 10.4.20**: Adds vendor prefixes to CSS
+- **Headless UI / Lucide React**: (Recommended) For accessible components and icons
 - **React DatePicker 6.9.0**: Date input components
 
 ### State Management & Data Flow
@@ -325,13 +326,30 @@ export const positionService = {
 
 ## UI/UX Standards
 
-### Bootstrap Integration
-- Use **React Bootstrap components** instead of plain Bootstrap
-- **Import Bootstrap CSS** in the main App component
-- Follow **Bootstrap responsive grid system** (Container, Row, Col)
+### Tailwind CSS Integration
+- **Utility-First**: Use Tailwind classes for all styling. Avoid custom CSS unless absolutely necessary.
+- **Responsive Design**: Use Tailwind's prefixes (`sm:`, `md:`, `lg:`, `xl:`) for all layout adjustments.
+- **Design Consistency**: Stick to the Tailwind color palette (e.g., `gray`, `blue`, `indigo`) and spacing scale.
 
-```javascript
-import { Container, Row, Col, Card, Button, Form, Alert } from 'react-bootstrap';
+```typescript
+// Good: Modern, responsive Tailwind component
+<div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-gray-700">
+  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h2>
+  <button className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all">
+    Save Changes
+  </button>
+</div>
+```
+
+### Dark Mode Support
+- **Prefix Usage**: Always include `dark:` variants for colors, borders, and backgrounds.
+- **Testing**: Ensure all screens are readable and aesthetically pleasing in both light and dark systems.
+- **Transitions**: Use `transition-colors duration-300` on top-level containers for smooth theme switching.
+
+```typescript
+<div className="bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100">
+  {/* Content */}
+</div>
 ```
 
 ### Form Handling
