@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { addCandidate, CandidateData, getSuggestions } from '../services/candidateService';
 
 const CandidateForm: React.FC = () => {
@@ -18,6 +18,7 @@ const CandidateForm: React.FC = () => {
     education: [],
     experience: [],
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -111,6 +112,10 @@ const CandidateForm: React.FC = () => {
         setMessage({ type: 'error', text: 'Invalid file type. Please upload a PDF or DOCX.' });
       }
     }
+  };
+
+  const handleZoneClick = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -275,6 +280,7 @@ const CandidateForm: React.FC = () => {
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
+                onClick={handleZoneClick}
               >
                 <div className="space-y-1 text-center">
                   <svg className={`mx-auto h-12 w-12 transition-colors ${isDragging ? 'text-blue-500' : 'text-gray-400 group-hover:text-blue-500'}`} stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
@@ -283,7 +289,15 @@ const CandidateForm: React.FC = () => {
                   <div className="flex text-sm text-gray-600 dark:text-gray-400">
                     <p className="relative cursor-pointer bg-transparent rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
                       <span>{cvFile ? 'Change file' : 'Upload a file'}</span>
-                      <input id="cvFile" name="cvFile" type="file" className="sr-only" accept=".pdf,.docx,.doc" onChange={handleFileChange} />
+                      <input 
+                        id="cvFile" 
+                        name="cvFile" 
+                        type="file" 
+                        ref={fileInputRef}
+                        className="sr-only" 
+                        accept=".pdf,.docx,.doc" 
+                        onChange={handleFileChange} 
+                      />
                     </p>
                     <p className="pl-1">or drag and drop</p>
                   </div>
